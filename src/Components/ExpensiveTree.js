@@ -8,4 +8,4 @@ function ExpensiveTree() {
   return <div />
 }
 
-export default ExpensiveTree
+export default React.memo(ExpensiveTree)
