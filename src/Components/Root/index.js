@@ -122,7 +122,7 @@ function Root() {
         </button>
         <ol>
           {fields.map((field, index) => (
-            <li key={index}>
+            <li key={field.id}>
               {field.name}:<br />
               <input type="text" />
             </li>
