@@ -15,6 +15,14 @@ import ExpensiveTree from '../ExpensiveTree'
 
 const postsLimit = 10;
 
+function range(start, end) {
+  const ans = [];
+  for (let i = start; i <= end; i += 1) {
+      ans.push(i);
+  }
+  return ans;
+}
+
 function Root() {
   const [count, setCount] = useState(0)
   const [fields, setFields] = useState([
@@ -72,7 +80,9 @@ function Root() {
           <button type="button" disabled={page <= 0} onClick={handlePreviousPage}>
             Previous
           </button>
-
+          { range(Math.max(page - 5, 0), page + 5).map(x => (
+            <button type="button" onClick={() => setPage(x)}>{x+1}</button>
+          ))}
           <button type="button" disabled={posts.length < postsLimit} onClick={handleNextPage}>
             Next
           </button>
