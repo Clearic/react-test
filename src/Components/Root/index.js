@@ -72,7 +72,7 @@ function Root() {
         {loading
           ? 'Loading...'
           : posts.map(post => (
-            <Post mx={4}>
+            <Post key={post.id} mx={4}>
               <NavLink href={POST(post.id)} to={POST(post.id)}>
                 {post.title}
               </NavLink>
@@ -85,7 +85,7 @@ function Root() {
             Previous
           </button>
           { range(Math.max(page - 5, 0), page + 5).map(x => (
-            <button type="button" onClick={() => setPage(x)}>{x+1}</button>
+            <button key={x} type="button" onClick={() => setPage(x)}>{x+1}</button>
           ))}
           <button type="button" disabled={posts.length < postsLimit} onClick={handleNextPage}>
             Next
