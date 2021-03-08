@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { useQuery } from '@apollo/client'
@@ -45,9 +45,13 @@ function Root() {
     setFields([{ name: faker.name.findName(), id: nanoid() }, ...fields])
   }
 
+  const countRef = useRef(0);
+  const timeoutRef = useRef(null);
+  countRef.current = count;
   function handleAlertClick() {
-    setTimeout(() => {
-      alert(`You clicked ${count} times`)
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      alert(`You clicked ${countRef.current} times`)
     }, 2500)
   }
 
