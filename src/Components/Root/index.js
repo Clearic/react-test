@@ -13,6 +13,8 @@ import { Column, Container, Post, PostAuthor, PostBody } from './styles'
 
 import ExpensiveTree from '../ExpensiveTree'
 
+const postsLimit = 10;
+
 function Root() {
   const [count, setCount] = useState(0)
   const [fields, setFields] = useState([
@@ -23,7 +25,13 @@ function Root() {
   ])
 
   const [value, setValue] = useState('')
-  const { data, loading } = useQuery(postsQuery)
+  const [page, setPage] = useState(0)
+  const { data, loading } = useQuery(postsQuery, {
+    variables: {
+      page,
+      limit: postsLimit
+    }
+  })
 
   function handlePush() {
     setFields([{ name: faker.name.findName(), id: nanoid() }, ...fields])
@@ -35,6 +43,14 @@ function Root() {
     }, 2500)
   }
 
+  function handleNextPage() {
+    setPage(x => x + 1);
+  }
+
+  function handlePreviousPage() {
+    setPage(x => x - 1);
+  }
+
   const posts = data?.posts.data || []
 
   return (
@@ -44,15 +60,23 @@ function Root() {
         {loading
           ? 'Loading...'
           : posts.map(post => (
-              <Post mx={4}>
-                <NavLink href={POST(post.id)} to={POST(post.id)}>
-                  {post.title}
-                </NavLink>
-                <PostAuthor>by {post.user.name}</PostAuthor>
-                <PostBody>{post.body}</PostBody>
-              </Post>
-            ))}
-        <div>Pagination here</div>
+            <Post mx={4}>
+              <NavLink href={POST(post.id)} to={POST(post.id)}>
+                {post.title}
+              </NavLink>
+              <PostAuthor>by {post.user.name}</PostAuthor>
+              <PostBody>{post.body}</PostBody>
+            </Post>
+          ))}
+        <div>
+          <button type="button" disabled={page <= 0} onClick={handlePreviousPage}>
+            Previous
+          </button>
+
+          <button type="button" disabled={posts.length < postsLimit} onClick={handleNextPage}>
+            Next
+          </button>
+        </div>
       </Column>
       <Column>
         <h4>Slow rendering</h4>
