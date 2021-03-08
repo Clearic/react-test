@@ -13,12 +13,12 @@ import { Column, Container, Post, PostAuthor, PostBody } from './styles'
 
 import ExpensiveTree from '../ExpensiveTree'
 
-const postsLimit = 10;
+const postsPerPageLimit = 10;
 
 function range(start, end) {
   const ans = [];
   for (let i = start; i <= end; i += 1) {
-      ans.push(i);
+    ans.push(i);
   }
   return ans;
 }
@@ -37,7 +37,7 @@ function Root() {
   const { data, loading } = useQuery(postsQuery, {
     variables: {
       page,
-      limit: postsLimit
+      limit: postsPerPageLimit
     }
   })
 
@@ -65,6 +65,11 @@ function Root() {
 
   const posts = data?.posts.data || []
 
+  const totalPostsCount = data?.posts?.meta.totalCount || 0;
+  const paginationFrom = Math.max(page - 5, 0)
+  const maxPages = Math.ceil(totalPostsCount / postsPerPageLimit)
+  const paginationTo = Math.min(page + 5, maxPages)
+
   return (
     <Container>
       <Column>
@@ -80,17 +85,29 @@ function Root() {
               <PostBody>{post.body}</PostBody>
             </Post>
           ))}
-        <div>
-          <button type="button" disabled={page <= 0} onClick={handlePreviousPage}>
-            Previous
-          </button>
-          { range(Math.max(page - 5, 0), page + 5).map(x => (
-            <button key={x} type="button" onClick={() => setPage(x)}>{x+1}</button>
-          ))}
-          <button type="button" disabled={posts.length < postsLimit} onClick={handleNextPage}>
-            Next
-          </button>
-        </div>
+        {!loading && (
+          <div>
+            <button
+              disabled={page <= 0}
+              type="button"
+              onClick={handlePreviousPage}
+            >
+              Previous
+            </button>
+            {range(paginationFrom, paginationTo).map(x => (
+              <button key={x} type="button" onClick={() => setPage(x)}>
+                {x === page ? <strong>{x + 1}</strong> : <>{x + 1}</>}
+              </button>
+            ))}
+            <button
+              disabled={page >= maxPages}
+              type="button"
+              onClick={handleNextPage}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </Column>
       <Column>
         <h4>Slow rendering</h4>
