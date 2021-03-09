@@ -17,7 +17,7 @@ export default function Container() {
 
   useEffect(() => {
     document.title = 'StartupCraft Test'
-  })
+  }, [])
 
   return (
     <ApolloProvider client={client}>
