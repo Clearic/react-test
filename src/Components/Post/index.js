@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useRouteMatch } from 'react-router'
+import { Link } from 'react-router-dom'
 import { sortableContainer, sortableElement } from 'react-sortable-hoc'
 
 import { useQuery } from '@apollo/client'
 import arrayMove from 'array-move'
 
 import postQuery from 'GraphQL/Queries/post.graphql'
+import postsQuery from 'GraphQL/Queries/posts.graphql'
 
-import { ROOT } from 'Router/routes'
+import { ROOT, POST } from 'Router/routes'
 
 import {
   Back,
@@ -49,6 +51,16 @@ function Post() {
       setComments(post.comments.data)
   }, [post])
 
+  // Feels wrong to relay on numerical id to determent next/prev post id. 
+  // In a real situation, I would receive it from the server.
+  const prevPostId = Number(postId) - 1;
+  const nextPostId = Number(postId) + 1;
+  const { data: dataPosts } = useQuery(postsQuery, {
+    variables: {
+      limit: 1
+    }
+  })
+
   return (
     <Container>
       <Column>
@@ -65,7 +77,19 @@ function Post() {
               <PostAuthor>by {post.user.name}</PostAuthor>
               <PostBody mt={2}>{post.body}</PostBody>
             </PostContainer>
-            <div>Next/prev here</div>
+            <div>
+              {prevPostId > 0 && (
+                <Link to={POST(prevPostId)}>
+                  Prev
+                </Link>
+              )}
+              {' '}
+              {dataPosts?.posts?.meta.totalCount >= nextPostId && (
+                <Link to={POST(nextPostId)}>
+                  Next
+                </Link>
+              )}
+            </div>
           </Column>
 
           <Column>
